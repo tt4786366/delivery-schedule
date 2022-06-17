@@ -37,4 +37,27 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+    
+    
+    public function redirectPath()
+    {
+        switch (\Auth::user()->authorization)
+        {
+        case 1:
+            return 'delivery';
+            break;
+        case 2:
+            return 'puroduction';
+            break;
+        case 3:
+            return 'management';
+            break;
+        default:
+            return $redirectTo;
+        }
+        
+    }    
+
+
+    
 }

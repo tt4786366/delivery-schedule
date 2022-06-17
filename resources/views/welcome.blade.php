@@ -6,4 +6,6 @@
             <h1>納品計画管理</h1>
         </div>
     </div>
+
+    
 @endsection
