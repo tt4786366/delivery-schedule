@@ -39,24 +39,7 @@ class LoginController extends Controller
     }
     
     
-    public function redirectPath()
-    {
-        switch (\Auth::user()->authorization)
-        {
-        case 1:
-            return 'delivery';
-            break;
-        case 2:
-            return 'puroduction';
-            break;
-        case 3:
-            return 'management';
-            break;
-        default:
-            return $redirectTo;
-        }
-        
-    }    
+   
 
 
     
