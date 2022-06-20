@@ -16,7 +16,6 @@ class CreateStoreChainsTable extends Migration
         Schema::create('store_chains', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name', 40);
-            $table->unsignedBigInteger('chain_id');
             $table->unsignedTinyInteger('pricetag_id');
             $table->unsignedTinyInteger('container_color_id');
             $table->timestamps();

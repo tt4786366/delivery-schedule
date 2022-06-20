@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-        return view('welcome');
-});
+
 
 
 
@@ -22,6 +20,14 @@ Route::get('/', function () {
 //Route::post('signup', 'Auth\RegisterController@register')->name('signup.post');
 
 Route::group(['middleware' => ['auth']], function () {
+    Route::resource('orderdrafts', 'OrderDraftsController');
+    Route::resource('orders', 'OrdersController', ['except' => ['destroy', 'show']]);
+
+Route::get('/', function () {
+        return view('welcome');
+});
+
+
     
 //    Route::group(['prefix' => 'users/{id}'], function () {
 //        Route::post('follow', 'UserFollowController@store')->name('user.follow');
@@ -38,8 +44,7 @@ Route::group(['middleware' => ['auth']], function () {
  //       Route::delete('unfavorite', 'FavoriteController@destroy')->name('favorites.unfavorite');
 //    });    
     
-    Route::resource('orders', 'OrdersController', ['except' => ['destroy', 'show']]);
-    Route::resource('orderdrafts', 'OrderDraftsController');
+//    Route::resource('orders', 'OrdersController', ['except' => ['destroy', 'show']]);
     
 //    Route::resource('orderdrafts', 'OrderdraftsController', ['only' => ['store', 'destroy']]);
 });  

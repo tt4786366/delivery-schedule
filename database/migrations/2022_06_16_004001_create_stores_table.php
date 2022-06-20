@@ -17,10 +17,10 @@ class CreateStoresTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->unsignedBigInteger('chain_id');
-            $table->string('store_number',40);
+            $table->string('store_number',40)->nullable();
             $table->unsignedBigInteger('user_id');
             $table->date('valid_from');
-            $table->date('valid_until');
+            $table->date('valid_until')->nullable();
             $table->timestamps();
             
             $table->foreign('chain_id')->references('id')->on('store_chains');

@@ -4,15 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class OrderDraft extends Model
 {
     protected $fillable = [
-         'approved by',
-    ];   
-    
-
-/*    protected $fillable = [
-    'id', 'store_id', 'product_id', 'deliver_date', 'quantity', 'approved by',
+        'store_id', 'product_id', 'deliver_date', 'quantity',
     ];    
     
     public function product()
@@ -23,7 +18,5 @@ class Order extends Model
     public function store()
     {
         return $this->belongsTo(Store::class);
-    }    */
-
-    
+    }  
 }
