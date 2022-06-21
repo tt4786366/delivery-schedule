@@ -4,11 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Store extends Model
+class Product extends Model
 {
-    public function user()
+    public function store()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Store::class);
     }  
     public function orders()
     {
@@ -16,7 +16,6 @@ class Store extends Model
     }
     public function order_drafts()
     {
-        return $this->hasMany(OrderDraft::class);
+        return $this->hasMany(Order::class);
     }
-
 }
