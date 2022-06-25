@@ -16,9 +16,6 @@ class OrderDraftsController extends Controller
         
         if (\Auth::check()) { // 認証済みの場合
             // 認証済みユーザを取得
-            $user = \Auth::user();
-
-            // ユーザの担当店舗を取得
             if ($request->has('start')){
                 $start = $request->start;
                 $end = $request->end;
@@ -43,6 +40,9 @@ class OrderDraftsController extends Controller
             ];
 
             }else{
+                $user = \Auth::user();
+
+            // ユーザの担当店舗を取得
 
                 $stores = $user->stores()->orderBy('id')->get();
                 $data = [
@@ -65,9 +65,29 @@ class OrderDraftsController extends Controller
     }
     
     
-    public function edit($id)
-    {//
-    }
+    public function edit(Request $request, $id)
+    {
+        $data=[];
+        if($request->has('product')){
+            
+        }else{
+            $store = Store::findOrFail($id);
+            $date=$request->date;
+            $products=Product::with(['order_drafts' => function($query) use($date, $id){
+                return $query-> where('deliver_date', $date) -> where('store_id', $id);}])
+                -> orderBy('category_id')
+                -> orderBy('price')->get();
 
+                $data = [
+                    'store' => $store, 
+                    'date' => $date,
+                    'products'=>$products
+                ];            
+
+        }
+return view('order_drafts.edit', $data);
+    }
+    
+    
     
 }

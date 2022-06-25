@@ -23,7 +23,8 @@
                         $date_count = 0;
                     ?>
 
-                    <table class="table table-responsive-sm">
+                    <table class="table caption-top">
+                        <caption>{{ $stores->name }}</caption>
                         
                         <thead class="thead">
                         <tr>
