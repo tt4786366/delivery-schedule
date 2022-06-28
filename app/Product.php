@@ -20,6 +20,6 @@ class Product extends Model
     }
     public function order_drafts()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(OrderDraft::class);
     }
 }

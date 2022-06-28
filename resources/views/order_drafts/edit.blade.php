@@ -20,9 +20,11 @@
 
                 @if (isset($date))
 
-
+                     {{ Form::open(['method' => 'put', 'route' => ['orderdrafts.update', $store->id]]) }}  
+                    {{Form::hidden('start',$start) }} 
+                    {{Form::hidden('end',$end) }}                      
                     <table class="table caption-top table-responsive-sm">
-                        
+                        <caption>{{ $store->name }}</caption>
                         <thead class="thead">
                         <tr>
                             <th>カテゴリ</th>
@@ -35,7 +37,9 @@
                         </th>
                     </tr>
                     </thead>
-                        
+                    <tbody>
+                        {{Form::hidden('date',$date) }}    
+                                            
                     @foreach($products as $product)
                         <tr>
                         <td>{{ $product->category->name }}</td>    
@@ -44,17 +48,26 @@
                         <td>{{ $product->lot }}</td>
                         <td>
 
-                        @if($product->order_drafts->has('quantity'))
-                        {{ $product->order_drafts->quantity}}
-                        {{Form::number($product->id,  $product->order_drafts->quantity , ['class' => 'form-control'])}}    
+
+                        @if($product->order_drafts->isEmpty()==False)
+
+                        {{--{{Form::number($product->id,  $product->order_drafts->quantity , ['class' => 'form-control'])}} --}}  
+{{ Form::hidden('products[' . $loop->index . '][id]', $product->id, ['class' => 'form-control']) }}
+{{ Form::number('products[' . $loop->index . '][quantity]', $product->order_drafts[0]->quantity, ['class' => 'form-control', 'min' => '0']) }}                        
                         @else
-                        {{Form::number($product->id,'', ['class' => 'form-control', 'min' => '0'])}}
+
+{{ Form::hidden('products[' . $loop->index . '][id]', $product->id, ['class' => 'form-control']) }}
+{{ Form::number('products[' . $loop->index . '][quantity]', '', ['class' => 'form-control', 'min' => '0']) }}                           
+                        {{-- {{Form::number($product->id,'', ['class' => 'form-control', 'min' => '0'])}} --}}
                         @endif
                         </td>
-
+                        </tr>
                     @endforeach
-                    </tr>
-                    </table>    
+                    </tbody>
+                    </table> 
+                     {!! Form::submit('登録', ['class' => 'btn btn-outline-dark']) !!}
+                    
+                    {!! Form::close() !!}
                 @else
 
 

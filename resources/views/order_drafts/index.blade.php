@@ -37,6 +37,8 @@
                         <th>
                         {{ Form::open(['method'=>'get', 'route' => ['orderdrafts.edit', $stores->id]]) }}    
                         {{Form::hidden('date',$date->format('Y/m/d')) }}
+                        {{Form::hidden('start',$start->format('Y-m-d')) }} 
+                        {{Form::hidden('end',$end->format('Y-m-d')) }} 
                          {!! Form::submit($date->format('m/d'), ['class' => 'btn btn-outline-dark']) !!}
                         {!! Form::close() !!}
                         <?php 
