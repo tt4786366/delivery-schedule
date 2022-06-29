@@ -18,21 +18,41 @@ class OrderDraftsController extends Controller
         if (\Auth::check()) { // 認証済みの場合
             // 認証済みユーザを取得
             if ($request->has('start')){
-                $start = $request->start;
-                $end = $request->end;
-$store_id=$request->store;
                 $store = Store::findOrFail($request->store);
+                $start=Carbon::createFromFormat('!Y-m-d',$request->start);
+                $end=Carbon::createFromFormat('!Y-m-d',$request->end);
+                $date=Carbon::createFromFormat('!Y-m-d',$request->start);                
 
-                $order_drafts=$store->order_drafts()
-                ->whereBetween('deliver_date', [$start, $end])->get();
-                $products = Product::with(['order_drafts' => function($query) use($start, $end, $store_id){
-                return $query-> whereBetween('deliver_date',[$start, $end]) -> where('store_id', $store_id)-> orderBy('deliver_date');}])
+                $date_count = 0;
+                $dates=array();
+                while($date->lte($end)){
+                    $dates[]=clone $date;
+                    $date->addDay();
+                    $date_count++;
+                }
+
+                //$order_drafts=$store->order_drafts()
+                //->whereBetween('deliver_date', [$start, $end])->get();
+                $products = Product::with(['order_drafts' => function($query) use($start, $end, $store){
+                return $query-> whereBetween('deliver_date',[$start, $end]) -> where('store_id', $store->id)-> orderBy('deliver_date');}])
                 ->where('valid_from', '<=', $end) 
                 -> where('valid_until', '>=', $start)
                 -> orderBy('category_id')
                 -> orderBy('price')
                 ->get();
 
+ $index = 0;
+ $quantity=[];
+ 
+foreach($products as $product){
+    foreach($product->order_drafts as $order_draft){
+        $quantity[$index][$order_draft->deliver_date] = $order_draft->quantity;
+    }
+    $index++;
+    
+}
+
+                
 
 /*                $products = Product::where('valid_from', '<=', $end) 
                 -> where('valid_until', '>=', $start)
@@ -42,11 +62,13 @@ $store_id=$request->store;
 
 
             $data = [
-                'stores' => $stores,
+                'store' => $store,
                 'products' => $products,
- //               'categories' => $categories,
-                'start'=> Carbon::createFromFormat('Y-m-d',$start),
-                'end'=> Carbon::createFromFormat('Y-m-d',$end),
+                'quantity' => $quantity,
+                'start'=> $start,
+                'end'=> $end,
+                'dates' => $dates,
+                'date_count' => $date_count,
             ];
 
             }else{

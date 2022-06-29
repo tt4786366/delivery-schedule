@@ -19,12 +19,12 @@
                 </div>
                 @if ($start)
                     <?php 
-                        $date=$start; 
-                        $date_count = 0;
+                        //$date=$start; 
+                        //$date_count = 0;
                     ?>
 
                     <table class="table caption-top">
-                        <caption>{{ $stores->name }}</caption>
+                        <caption>{{ $store->name }}</caption>
                         
                         <thead class="thead">
                         <tr>
@@ -33,27 +33,24 @@
                             <th>価格</th>
                             <th>ロット</th>
 
-                    @while($date->lte($end))
+                    @for($i = 0; $i<$date_count;$i++)
                         <th>
-                        {{ Form::open(['method'=>'get', 'route' => ['orderdrafts.edit', $stores->id]]) }}    
-                        {{Form::hidden('date',$date->format('Y/m/d')) }}
+                        {{ Form::open(['method'=>'get', 'route' => ['orderdrafts.edit', $store->id]]) }}    
+                        {{Form::hidden('date',$dates[$i]->format('Y/m/d')) }}
                         {{Form::hidden('start',$start->format('Y-m-d')) }} 
                         {{Form::hidden('end',$end->format('Y-m-d')) }} 
-                         {!! Form::submit($date->format('m/d'), ['class' => 'btn btn-outline-dark']) !!}
+                         {!! Form::submit($dates[$i]->format('m/d'), ['class' => 'btn btn-outline-dark']) !!}
                         {!! Form::close() !!}
-                        <?php 
-                        $date = $date->addDay();
-                        $date_count++;
-                        ?>
                         </th>
-                    @endwhile
+
+                    @endfor
                     </tr>
                     </thead>
                         
                     @foreach($products as $product)
                         <tr>
                         <td>{{ $product->category->name }}</td>    
-                        <td>{{ Form::open(['method'=>'get', 'route' => ['orderdrafts.edit', $stores->id]]) }}    
+                        <td>{{ Form::open(['method'=>'get', 'route' => ['orderdrafts.edit', $store->id]]) }}    
                         {{Form::hidden('start',$start->format('Y/m/d')) }}
                         {{Form::hidden('end',$end->format('Y/m/d')) }}
                         {{Form::hidden('product',$product->id) }}
@@ -63,11 +60,19 @@
                         <td>{{ $product->price }}</td>
                         <td>{{ $product->lot }}</td>
                         @for ($i = 0; $i < $date_count; $i++)
+                            @if (isset($quantity[$loop->iteration-1][$dates[$i]->format('Y-m-d')]))
+                            <td>{{ $quantity[$loop->iteration-1][$dates[$i]->format('Y-m-d')] }}</td>
+                            @else
                             <td></td>
+                            @endif
                         @endfor
  
                     @endforeach
                     </tr>
+                    
+                    
+                    
+                    
                     </table>    
                 @else
                     @include('order_drafts.search')
