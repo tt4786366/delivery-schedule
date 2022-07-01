@@ -35,12 +35,18 @@
 
                     @for($i = 0; $i<$date_count;$i++)
                         <th>
+                        @if ($order_exists[$dates[$i]->format('Y-m-d')])    
+                            {{$dates[$i]->format('m/d')}}
+
+                        @else
                         {{ Form::open(['method'=>'get', 'route' => ['orderdrafts.edit', $store->id]]) }}    
                         {{Form::hidden('date',$dates[$i]->format('Y/m/d')) }}
                         {{Form::hidden('start',$start->format('Y-m-d')) }} 
                         {{Form::hidden('end',$end->format('Y-m-d')) }} 
                          {!! Form::submit($dates[$i]->format('m/d'), ['class' => 'btn btn-sm btn-outline-dark']) !!}
                         {!! Form::close() !!}
+                        
+                        @endif
                         </th>
 
                     @endfor
@@ -56,7 +62,7 @@
                         {{Form::hidden('start',$start->format('Y-m-d')) }}
                         {{Form::hidden('end',$end->format('Y-m-d')) }}
                         {{Form::hidden('product',$product->id) }}
-                         {!! Form::submit($product->name, ['class' => 'btn btn-outline-dark']) !!}
+                         {!! Form::submit($product->name, ['class' => 'btn btn-sm btn-outline-dark']) !!}
                         {!! Form::close() !!}
                         </td>
                         <td>{{ $product->price }}</td>
@@ -68,15 +74,38 @@
                             <td></td>
                             @endif
                         @endfor
-                        <td>{{$sum[$loop->iteration-1]}}</td>
-                        <td>{{$product->price * $product->lot * $sum[$loop->iteration-1]}}</td>
+                        <td>{{$sum[$loop->iteration-1]['quantity']}}</td>
+                        <td>{{$sum[$loop->iteration-1]['price']}}</td>
                     @endforeach
                     </tr>
-                    
-                    
-                    
-                    
+                        <tr>
+                            <th>合計</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                    @for($i = 0; $i<$date_count;$i++)
+                        <td>
+                        </td>
+
+                    @endfor
+                    <td>{{$total['quantity']}}</td>
+                    <td>{{$total['price']}}</td>
+                    </tr>
                     </table>    
+                   <div class="row justify-content-around  my-5">
+                {{Form::open(['method' => 'post', 'route' => ['orderdrafts.store']]) }}  
+
+                     {!! Form::submit('確定して提出', ['class' => 'btn btn-outline-dark']) !!}
+                    {{Form::hidden('start',$start->format('Y-m-d')) }}
+                    {{Form::hidden('end',$end->format('Y-m-d')) }}
+                    {{Form::hidden('id',$store->id) }}                      
+
+                        {{--{!! link_to_route('orderdrafts.index', '戻る','',  ['class' => 'btn btn-outline-dark col-4']) !!}--}}
+                    {!! Form::close() !!}
+
+                        {!! Form::button('戻る', ['class' => 'btn btn-outline-dark col-4', 'onClick' => 'history.back();']) !!}
+                    </div>                    
                 @else
                     @include('order_drafts.search')
 

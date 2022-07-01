@@ -14,13 +14,12 @@
                 管理者の処理選択
                 @break
             @case (2)
+                {{Form::open(['method' => 'put', 'route' => ['orderdrafts.update', $store->id]]) }}  
 
                 @if (isset($date))
                 <div class="text-center">
                     <h1>日別計画作成</h1>
                 </div>
-
-                     {{ Form::open(['method' => 'put', 'route' => ['orderdrafts.update', $store->id]]) }}  
                     {{Form::hidden('start',$start) }} 
                     {{Form::hidden('end',$end) }}                      
                     <table class="table caption-top table-responsive-sm">
@@ -65,15 +64,11 @@
                     @endforeach
                     </tbody>
                     </table> 
-                     {!! Form::submit('登録', ['class' => 'btn btn-outline-dark']) !!}
-                    
-                    {!! Form::close() !!}
                 @else
                 <div class="text-center">
                     <h1>商品別計画作成</h1>
                 </div>
 
-                    {{Form::open(['method' => 'put', 'route' => ['orderdrafts.update', $store->id]]) }}  
                     {{Form::hidden('start',$start) }} 
                     {{Form::hidden('end',$end) }}                      
                     {{Form::hidden('product', $product->id)}}
@@ -106,12 +101,18 @@
                         </tr>
                     @endforeach
                     </tbody>
-                    </table> 
-                     {!! Form::submit('登録', ['class' => 'btn btn-outline-dark']) !!}
+                    </table>
                     
-                    {!! Form::close() !!}
 
                 @endif
+                   <div class="row justify-content-left">
+                     {!! Form::submit('登録', ['class' => 'btn btn-outline-dark']) !!}
+
+                    {!! Form::button('戻る', ['class' => 'btn btn-outline-dark', 'onClick' => 'history.back();']) !!}
+                    {!! Form::close() !!}
+
+                    </div>                    
+
                 @break
             @case (3)
         <div class="text-center">
@@ -123,7 +124,6 @@
                 @break
             @default
         @endswitch
-
     @else
     @endif    
     
