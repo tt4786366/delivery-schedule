@@ -39,11 +39,13 @@
                         {{Form::hidden('date',$dates[$i]->format('Y/m/d')) }}
                         {{Form::hidden('start',$start->format('Y-m-d')) }} 
                         {{Form::hidden('end',$end->format('Y-m-d')) }} 
-                         {!! Form::submit($dates[$i]->format('m/d'), ['class' => 'btn btn-outline-dark']) !!}
+                         {!! Form::submit($dates[$i]->format('m/d'), ['class' => 'btn btn-sm btn-outline-dark']) !!}
                         {!! Form::close() !!}
                         </th>
 
                     @endfor
+                    <th>計</th>
+                    <th>金額</th>
                     </tr>
                     </thead>
                         
@@ -51,8 +53,8 @@
                         <tr>
                         <td>{{ $product->category->name }}</td>    
                         <td>{{ Form::open(['method'=>'get', 'route' => ['orderdrafts.edit', $store->id]]) }}    
-                        {{Form::hidden('start',$start->format('Y/m/d')) }}
-                        {{Form::hidden('end',$end->format('Y/m/d')) }}
+                        {{Form::hidden('start',$start->format('Y-m-d')) }}
+                        {{Form::hidden('end',$end->format('Y-m-d')) }}
                         {{Form::hidden('product',$product->id) }}
                          {!! Form::submit($product->name, ['class' => 'btn btn-outline-dark']) !!}
                         {!! Form::close() !!}
@@ -66,7 +68,8 @@
                             <td></td>
                             @endif
                         @endfor
- 
+                        <td>{{$sum[$loop->iteration-1]}}</td>
+                        <td>{{$product->price * $product->lot * $sum[$loop->iteration-1]}}</td>
                     @endforeach
                     </tr>
                     
