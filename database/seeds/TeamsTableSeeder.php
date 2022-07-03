@@ -9,9 +9,8 @@ class TeamsTableSeeder extends Seeder
      *
      * @return void
      */
-    public function run(){
-
-
+    public function run()
+    {
                DB::table('teams')->insert([
                     
                     'name' => 'A',
@@ -20,23 +19,20 @@ class TeamsTableSeeder extends Seeder
 
                DB::table('teams')->insert([
                     
-                    'name' => 'B'
+                    'name' => 'B',
                     'section_id' => 1
                 ]);
                 
                DB::table('teams')->insert([
                     
-                    'name' => 'C'
+                    'name' => 'C',
                     'section_id' => 1
                 ]);
 
                DB::table('teams')->insert([
                     
-                    'name' => 'D'
+                    'name' => 'D',
                     'section_id' => 1
-                ]);                
-
-
-        } 
+                ]);   
     }
 }
