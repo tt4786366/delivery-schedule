@@ -164,7 +164,7 @@ class OrderDraftsController extends Controller
     {
         if ($request->has('date')){
             $deliver_date = $request->date;
-            $products = $request->products; // 配列で取得できるはず
+            $products = $request->products; 
             foreach ($products as $product) {
                   upsertOrDelete($id, $product['id'],$deliver_date,$product['quantity']);
             }    
