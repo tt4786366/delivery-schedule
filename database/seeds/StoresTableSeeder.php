@@ -12,7 +12,7 @@ class StoresTableSeeder extends Seeder
     public function run()
     {
         $chainid=1;
-        for($userid = 6; $userid <= 18; $userid++) {
+        for($userid = 1; $userid <= 14; $userid++) {
                 for($store = 1; $store <= 6; $store++){
                     DB::table('stores')->insert([
                         'name' => '店舗' . $userid . '-' . $store,
