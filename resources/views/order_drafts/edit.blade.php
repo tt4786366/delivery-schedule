@@ -91,6 +91,8 @@
                             @endif
                         @else
                             @if($order_exists[$date->format('Y-m-d')])
+                                {{ Form::number('', '', ['class' => 'form-control text-right', 'min' => '0', 'disabled']) }}                        
+
                             @else
                                 {{Form::hidden('dates[' . $loop->index . ']',$date->format('Y-m-d')) }}
                                 {{ Form::number('quantity[' . $loop->index . ']', '', ['class' => 'form-control', 'min' => '0']) }}                        

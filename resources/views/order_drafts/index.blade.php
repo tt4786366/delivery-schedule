@@ -27,11 +27,12 @@
                         <tr>
                             <th>カテゴリ</th>
                             <th>商品名</th>
-                            <th>価格</th>
-                            <th>ロット</th>
+                            <th><div class="text-right">価格</div></th>
+                            <th><div class="text-right">ロット</div></th>
 
                     @for($i = 0; $i<$date_count;$i++)
                         <th>
+                            <div class="text-right">                       
                         @if ($order_exists[$dates[$i]->format('Y-m-d')])    
                             {{$dates[$i]->format('m/d')}}
 
@@ -44,6 +45,7 @@
                         {!! Form::close() !!}
                         
                         @endif
+                            </div>
                         </th>
 
                     @endfor
