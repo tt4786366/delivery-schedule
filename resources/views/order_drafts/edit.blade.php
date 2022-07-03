@@ -50,14 +50,12 @@
 
                         @if($product->order_drafts->isEmpty()==False)
 
-                        {{--{{Form::number($product->id,  $product->order_drafts->quantity , ['class' => 'form-control'])}} --}}  
                             {{ Form::hidden('products[' . $loop->index . '][id]', $product->id, ['class' => 'form-control']) }}
-                            {{ Form::number('products[' . $loop->index . '][quantity]', $product->order_drafts[0]->quantity, ['class' => 'form-control', 'min' => '0']) }}                        
+                            {{ Form::number('products[' . $loop->index . '][quantity]', $product->order_drafts[0]->quantity, ['class' => 'form-control text-right', 'min' => '0']) }}                        
                         @else
 
                             {{ Form::hidden('products[' . $loop->index . '][id]', $product->id, ['class' => 'form-control']) }}
-                            {{ Form::number('products[' . $loop->index . '][quantity]', '', ['class' => 'form-control', 'min' => '0']) }}                           
-                        {{-- {{Form::number($product->id,'', ['class' => 'form-control', 'min' => '0'])}} --}}
+                            {{ Form::number('products[' . $loop->index . '][quantity]', '', ['class' => 'form-control text-right', 'min' => '0']) }}                           
                         @endif
                         </td>
                         </tr>
@@ -72,32 +70,33 @@
                     {{Form::hidden('start',$start) }} 
                     {{Form::hidden('end',$end) }}                      
                     {{Form::hidden('product', $product->id)}}
-                    <table class="table caption-top table-responsive-sm">
+                    <table class="table caption-top table-responsive-sm ">
                         <caption>{{ $store->name }}　商品名：{{$product->name}} 価格：{{$product->price}}ロット：{{$product->lot}}</caption>
-                        <thead class="thead">
-                        <tr>
-
-                        <th>
-                        </th>
-                    </tr>
-                    </thead>
                     <tbody>
                                             
                     @foreach($dates as $date)
                         <tr>
                         <td>{{$date->format('m/d')}}</td>    
-                        <td>
+                        <td><div class="text-right">
 
 
-                        @if(isset($quantity[$date->format('Y-m-d')]))
-                            {{Form::hidden('dates[' . $loop->index . ']',$date->format('Y-m-d')) }}
-                            {{ Form::number('quantity[' . $loop->index . ']', $quantity[$date->format('Y-m-d')], ['class' => 'form-control', 'min' => '0']) }}                        
-      
+                        @if(isset($quantity[$product->id][$date->format('Y-m-d')]))
+                        
+                            @if($order_exists[$date->format('Y-m-d')])
+                                {{ Form::number('', '', ['class' => 'form-control text-right', 'min' => '0', 'placeholder' => $quantity[$product->id][$date->format('Y-m-d')], 'disabled']) }}                        
+
+                            @else
+                                {{Form::hidden('dates[' . $loop->index . ']',$date->format('Y-m-d')) }}
+                                {{ Form::number('quantity[' . $loop->index . ']', $quantity[$product->id][$date->format('Y-m-d')], ['class' => 'form-control text-right', 'min' => '0']) }}                        
+                            @endif
                         @else
-                            {{Form::hidden('dates[' . $loop->index . ']',$date->format('Y-m-d')) }}
-                            {{ Form::number('quantity[' . $loop->index . ']', '', ['class' => 'form-control', 'min' => '0']) }}                        
+                            @if($order_exists[$date->format('Y-m-d')])
+                            @else
+                                {{Form::hidden('dates[' . $loop->index . ']',$date->format('Y-m-d')) }}
+                                {{ Form::number('quantity[' . $loop->index . ']', '', ['class' => 'form-control', 'min' => '0']) }}                        
+                            @endif    
                         @endif
-                        </td>
+                        </div></td>
                         </tr>
                     @endforeach
                     </tbody>

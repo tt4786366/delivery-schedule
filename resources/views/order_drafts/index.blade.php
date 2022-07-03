@@ -17,13 +17,10 @@
                 <div class="text-center">
                     <h1>計画作成</h1>
                 </div>
-                @if ($start)
-                    <?php 
-                        //$date=$start; 
-                        //$date_count = 0;
-                    ?>
+                @if (isset($start))
 
-                    <table class="table caption-top">
+
+                    <table class="table caption-top table-sm">
                         <caption>{{ $store->name }}</caption>
                         
                         <thead class="thead">
@@ -65,17 +62,24 @@
                          {!! Form::submit($product->name, ['class' => 'btn btn-sm btn-outline-dark']) !!}
                         {!! Form::close() !!}
                         </td>
-                        <td>{{ $product->price }}</td>
-                        <td>{{ $product->lot }}</td>
+                        <td><div class="text-right">{{ $product->price }}</div></td>
+                        <td><div class="text-right">{{ $product->lot }}</div></td>
                         @for ($i = 0; $i < $date_count; $i++)
-                            @if (isset($quantity[$loop->iteration-1][$dates[$i]->format('Y-m-d')]))
-                            <td>{{ $quantity[$loop->iteration-1][$dates[$i]->format('Y-m-d')] }}</td>
+                            @if (isset($quantity[$product->id][$dates[$i]->format('Y-m-d')]))
+                            <td class="pr-3"><div class="text-right">{{ $quantity[$product->id][$dates[$i]->format('Y-m-d')] }}</div></td>
                             @else
                             <td></td>
                             @endif
                         @endfor
-                        <td>{{$sum[$loop->iteration-1]['quantity']}}</td>
-                        <td>{{$sum[$loop->iteration-1]['price']}}</td>
+                        @if (isset($sum[$product->id]['quantity']))
+                        <td><div class="text-right">{{$sum[$product->id]['quantity']}}</div></td>
+                        <td><div class="text-right">{{$sum[$product->id]['price']}}</div></td>
+                        @else
+                        <td></td>
+                        <td></td>
+                        @endif
+
+
                     @endforeach
                     </tr>
                         <tr>
@@ -89,22 +93,21 @@
                         </td>
 
                     @endfor
-                    <td>{{$total['quantity']}}</td>
-                    <td>{{$total['price']}}</td>
+                    <td><div class="text-right">{{$total['quantity']}}</div></td>
+                    <td><div class="text-right">{{$total['price']}}</div></td>
                     </tr>
                     </table>    
-                   <div class="row justify-content-around  my-5">
-                {{Form::open(['method' => 'post', 'route' => ['orderdrafts.store']]) }}  
+                   <div class="">
+                {{Form::open(['method' => 'post', 'route' => ['orderdrafts.store'], 'class' => 'row justify-content-around  my-5']) }}  
 
-                     {!! Form::submit('確定して提出', ['class' => 'btn btn-outline-dark']) !!}
+                     {!! Form::submit('確定して提出', ['class' => 'btn btn-outline-dark col-4']) !!}
                     {{Form::hidden('start',$start->format('Y-m-d')) }}
                     {{Form::hidden('end',$end->format('Y-m-d')) }}
                     {{Form::hidden('id',$store->id) }}                      
+                    {!! Form::button('戻る', ['class' => 'btn btn-outline-dark col-4', 'onClick' => 'history.back();']) !!}
 
-                        {{--{!! link_to_route('orderdrafts.index', '戻る','',  ['class' => 'btn btn-outline-dark col-4']) !!}--}}
                     {!! Form::close() !!}
 
-                        {!! Form::button('戻る', ['class' => 'btn btn-outline-dark col-4', 'onClick' => 'history.back();']) !!}
                     </div>                    
                 @else
                     @include('order_drafts.search')
