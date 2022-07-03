@@ -17,7 +17,7 @@ class SectionsTableSeeder extends Seeder
 
                 ]);
 
-               DB::table('sectionss')->insert([
+               DB::table('sections')->insert([
                     
                     'name' => '製造'
                 ]);
