@@ -19,7 +19,7 @@ class SectionsTableSeeder extends Seeder
 
                DB::table('sections')->insert([
                     
-                    'name' => '製造'
+                    'name' => '内勤'
                 ]);
 
     }

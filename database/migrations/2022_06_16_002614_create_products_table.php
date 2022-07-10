@@ -22,7 +22,7 @@ class CreateProductsTable extends Migration
             $table->unsignedSmallInteger('factory_id');
             $table->unsignedBigInteger('chain_id')->nullable();
             $table->date('valid_from');
-            $table->date('valid_until');
+            $table->date('valid_until')->nullable();
             $table->timestamps();
 
             $table->foreign('chain_id')->references('id')->on('store_chains');

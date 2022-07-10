@@ -34,5 +34,16 @@ class TeamsTableSeeder extends Seeder
                     'name' => 'D',
                     'section_id' => 1
                 ]);   
+                
+                for($team=1; $team<=4; $team++){
+                    DB::table('teams')->insert([
+                        
+                        'name' => $team,
+                        'section_id' => 2
+                    ]);                    
+                }
+                
+
+
     }
 }

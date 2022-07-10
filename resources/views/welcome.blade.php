@@ -6,12 +6,9 @@
         @switch (Auth::user()->authorization)
     
             @case (1)
-                <div class="text-center">
-                    <h1>管理者処理選択</h1>
-                </div>
-                <div class="row">
-                </div>
-                管理者の処理選択
+                {{-- ユーザ一覧 --}}
+                @include('menu.administrator')
+            
                 @break
             @case (2)
                 <div class="text-center">
