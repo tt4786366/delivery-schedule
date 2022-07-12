@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Store extends Model
 {
+    protected $fillable = [
+        'name', 'chain_id', 'store_number', 'user_id', 'valid_from', 'valid_until',
+    ];      
+    
+    
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -18,5 +23,10 @@ class Store extends Model
     {
         return $this->hasMany(OrderDraft::class);
     }
+    public function store_chain()
+    {
+        return $this->belongsTo(StoreChain::class, 'chain_id');
+    }  
+
 
 }

@@ -11,12 +11,44 @@ class CategoriesTableSeeder extends Seeder
      */
     public function run()
     {
-        for($i = 1; $i <= 8; $i++) {
+
 
                DB::table('categories')->insert([
                     
-                    'name' => 'テストカテゴリ ' . $i,
+                    'name' => '菊',
                 ]);
-        } 
+
+               DB::table('categories')->insert([
+                    
+                    'name' => 'ユリ',
+                ]);
+               DB::table('categories')->insert([
+                    
+                    'name' => 'ほおずき',
+                ]);
+               DB::table('categories')->insert([
+                    
+                    'name' => '造花',
+                ]);                
+               DB::table('categories')->insert([
+                    
+                    'name' => '季節商品',
+                ]);
+               DB::table('categories')->insert([
+                    
+                    'name' => 'しばさかき',
+                ]);
+               DB::table('categories')->insert([
+                    
+                    'name' => '季節切り花',
+                ]);
+               DB::table('categories')->insert([
+                    
+                    'name' => '組花',
+                ]);
+               DB::table('categories')->insert([
+                    
+                    'name' => 'アレンジ',
+                ]);                
     }
 }

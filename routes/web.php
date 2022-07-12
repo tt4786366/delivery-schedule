@@ -23,7 +23,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('orderdrafts', 'OrderDraftsController');
     Route::resource('orders', 'OrdersController', ['except' => ['destroy', 'show']]);
     Route::resource('users', 'UsersController', ['only' => ['index', 'show']]);    
-
+    Route::resource('stores', 'StoresController');    
+    Route::resource('products', 'ProductsController');    
 Route::get('/', function () {
         return view('welcome');
 });

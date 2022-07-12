@@ -11,7 +11,14 @@ class TeamsTableSeeder extends Seeder
      */
     public function run()
     {
+
                DB::table('teams')->insert([
+                    
+                    'name' => 'その他',
+                    'section_id' => 1
+                ]);   
+
+ /*              DB::table('teams')->insert([
                     
                     'name' => 'A',
                     'section_id' => 1
@@ -42,7 +49,7 @@ class TeamsTableSeeder extends Seeder
                         'section_id' => 2
                     ]);                    
                 }
-                
+   */             
 
 
     }
