@@ -8,9 +8,17 @@
             @case (1)
         <div class="text-center">
             <h1>管理者処理選択</h1>
-        </div>
-        <div class="row">
-        </div>
+         </div>
+             @if (isset($start))
+
+            @include('orders.navtabs')         
+            @include('orders.table');
+            @else
+
+            @include('orders.search')
+            @endif
+
+
                 管理者の処理選択
                 @break
             @case (2)

@@ -3,31 +3,57 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Store;
-use App\Product;
-use App\OrderDraft;
+use App\User;
 use App\Order;
 use Carbon\Carbon;
+use App\Store;
+use App\Product;
 
 require_once 'OrderTrait.php';
 
-
-class OrderDraftsController extends Controller
+class OrdersController extends Controller
 {
-    Use OrderTrait;
+    use OrderTrait;
      public function index(Request $request)
     {
- 
+
         $data = [];
         
         if (\Auth::check()) { // 認証済みの場合
             // 認証済みユーザを取得
+            $authorization = \Auth::user()->authorization;
+
             if ($request->has('start')){
-                $store = Store::findOrFail($request->store);
+                if ($request->has('user')){
+                    $user=$request->user;
+                }else {
+                    $store = Store::findOrFail($request->store);
+                    $user=$store->user->id;
+                }
+
                 $start=Carbon::createFromFormat('!Y-m-d',$request->start);
                 $end=Carbon::createFromFormat('!Y-m-d',$request->end);
                 $date=Carbon::createFromFormat('!Y-m-d',$request->start);                
                 $date_count = 0;
+                $stores = Store::where('user_id', $user)
+                ->orderBy('chain_id', 'asc')
+                ->orderBy('id')->get();
+                switch ($authorization){
+                    case 1:
+                    if (isset($store)==false){
+                        $store = $stores[0];
+                    }
+    
+                    break;
+                    case 2:
+                        $store = Store::findOrFail($request->store);
+
+                        break;
+                    case 3:
+                        break;
+                    default:
+                }
+
                 //期間中の日付をdate型の配列にする。
                 $dates=$this->setDates($date, $end, $date_count);
                 //指定期間の各日が提出済みか確認                
@@ -54,7 +80,9 @@ class OrderDraftsController extends Controller
 
 
                 $data = [
+//                    'user' => $user,
                     'store' => $store,                  //店舗データ
+                    'stores' => $stores,
                     'products' => $products,            //商品データ
                     'order_exists' => $order_exists,    //各日付の申請済みデータの有無
                     'quantity' => $quantity,            //発注数の配列
@@ -65,23 +93,22 @@ class OrderDraftsController extends Controller
                     'dates' => $dates,                  //開始日から終了日までのdate型の配列
                     'date_count' => $date_count,        //日数
                 ];
-
             }else{
                 //期間が選択されていない場合は、期間、店舗の選択画面を表示する
 
                 // ユーザの担当店舗を取得
-                $user = \Auth::user();
-                $stores = $user->stores()->orderBy('id')->get();
+                $users = User::where('authorization',2)->orderBy('team_id')->get();
+                //$stores = $user->stores()->orderBy('id')->get();
                 $data = [
-                    'stores' => $stores,  
-//                    'start'=>""
+                    'users' => $users,  
+
                 ];
             }
 
         }
 
         // indexビューでそれらを表示
-        return view('order_drafts.index', $data);
+        return view('orders.index', $data);
 
     }
     
@@ -92,8 +119,7 @@ class OrderDraftsController extends Controller
             $store = Store::findOrFail($id);
         //商品が選択されている場合は、日付ごとの入力
         if($request->has('product')){
-//            $product = Product::findOrFail($request->product);
-            $product = $this->getProduct($request->product);    
+            $product = Product::findOrFail($request->product);
             //order_drafts, ordersテーブルのデータを取得
             $orders = $this->getOrders($store->id, $request->start, $request->end, $product->id);
 
@@ -105,7 +131,7 @@ class OrderDraftsController extends Controller
             $order_exists = $this->ifOrderExists($dates, $id);
             $sum = 0;
             $quantity=[];
-            list($sum, $quantity)=$this -> setQuantityToDate($orders);
+            list($sum, $quantity)=$this->setQuantityToDate($orders);
             $data = [
                 'store' => $store,
                 'product' => $product,
@@ -118,7 +144,7 @@ class OrderDraftsController extends Controller
         //日付が選択されている場合は、商品ごとの入力
         }else{
             $date=$request->date;
-            $products=Product::with(['order_drafts' => function($query) use($date, $id){
+            $products=Product::with(['orders' => function($query) use($date, $id){
                 return $query-> where('deliver_date', $date) -> where('store_id', $id);}])
                 -> orderBy('category_id')
                 -> orderBy('price')->get();
@@ -132,31 +158,17 @@ class OrderDraftsController extends Controller
                 ];            
 
         }
-        return view('order_drafts.edit', $data);
+        return view('orders.edit', $data);
     }
 
 
 
     public function store(Request $request){
-    $order_drafts=OrderDraft::where('store_id', $request->id)
-    ->whereBetween('deliver_date', [$request->start, $request->end])
-    ->orderBy('deliver_date')
-    ->get();
-
-        foreach($order_drafts as $order_draft){    
-
-            Order::Create(
-                ['store_id' => $order_draft->store_id, 
-                'product_id' => $order_draft->product_id, 
-                'deliver_date'=> $order_draft->deliver_date, 
-                'quantity' => $order_draft->quantity]
-            );
-        }
-    OrderDraft::where('store_id', $request->id)
-    ->whereBetween('deliver_date', [$request->start, $request->end])
-    ->orderBy('deliver_date')
-    ->delete();    
-        return redirect()->route('orderdrafts.index',  ['start'=>$request->start, 'end' =>$request->end, 'store'=> $request->id]);
+    Order::where('store_id', $request->id)
+        ->whereBetween('deliver_date', [$request->start, $request->end])
+          ->update(['approved_by' =>\Auth::user()->id ]);
+    
+        return redirect()->route('orders.index',  ['start'=>$request->start, 'end' =>$request->end, 'store'=> $request->id, 'user' =>$request->user]);
 
     }
     
@@ -179,104 +191,8 @@ class OrderDraftsController extends Controller
             }    
 
         }
-        return redirect()->route('orderdrafts.index',  ['start'=>$request->start, 'end' =>$request->end, 'store'=> $id]);
+        return redirect()->route('orders.index',  ['start'=>$request->start, 'end' =>$request->end, 'store'=> $id]);
     }
 }
-/*
-//計画作成期間分の日付を配列にする。
-function setDates($date, $end, &$date_count){
-//    $date=Carbon::createFromFormat('!Y-m-d',$start);                
-    $dates=array();
-    while($date->lte($end)){
-        $dates[]=clone $date;
-        $date->addDay();
-        $date_count++;
-    }
-    return $dates;
+    //
 
-}
-
-//日付をキーとする連想配列に、発注数をセットし、配列と合計を返す
-function setQuantityToDate($orders){
-    $sum = [];
-    $quantity = [];
-    foreach($orders as $order){
-        $quantity[$order->product->id][$order->deliver_date] = $order->quantity;
-        if (isset($sum[$order->product->id])){
-        $sum[$order->product->id]['quantity']+=$order->quantity;
-        }else{
-        $sum[$order->product->id]['quantity']=$order->quantity;
-        }
-    }
-    return [$sum, $quantity];
-}
-
-//データが入力されていれば、データを追加または更新。空白又は0ならデータを削除する。
-function upsertOrDelete($store_id,$product_id,$deliver_date,$quantity){
-        if ($quantity != 0 && $quantity!=null){
-
-            OrderDraft::updateOrCreate(
-                ['store_id' => $store_id, 'product_id' => $product_id, 'deliver_date'=> $deliver_date],
-                ['quantity' => $quantity]
-            );
-        }else{
-            OrderDraft::where('store_id', $store_id)-> where('product_id', $product_id) -> where('deliver_date', $deliver_date)->delete();
-        }
-        return;             
-}    
-
-function ifOrderExists($dates, $store_id){
-    $order_exists=[];
-    foreach($dates as $date){
-    $order_exists[$date->format('Y-m-d')]=Order::where('store_id', $store_id)
-    ->where('deliver_date', $date)->exists();
-    }
-    return $order_exists;
-
-}
-
-function getProducts($start, $end){
-        //現在有効な商品を取得
-    $products = Product::where('valid_from', '<=', $end) 
-    -> where('valid_until', '>=', $start)
-    -> orderBy('category_id')
-    -> orderBy('price')
-    ->get();
-
-    return $products;
-    
-}
-
-function getOrders($store_id, $start, $end, $product_id = null){
-    //order_draftテーブルのデータを取得
-    if($product_id == null){
-        $order_drafts = OrderDraft::select(['store_id', 'product_id', 'deliver_date', 'quantity'])
-       // ->with('product:id')
-        ->where('store_id', $store_id)
-        ->whereBetween('deliver_date', [$start, $end]);
-        //order_draftテーブルのデータを取得
-        $orders = Order::select(['store_id', 'product_id', 'deliver_date', 'quantity'])
-        //->with('product:id')
-        ->where('store_id', $store_id)
-        ->whereBetween('deliver_date', [$start, $end]);
-    }else{
-        $order_drafts = OrderDraft::select(['store_id', 'product_id', 'deliver_date', 'quantity'])
-        //->with('product:id')
-        ->where('store_id', $store_id)
-        ->where('product_id', $product_id)
-        ->whereBetween('deliver_date', [$start, $end]);
-        //order_draftテーブルのデータを取得
-        $orders = Order::select(['store_id', 'product_id', 'deliver_date', 'quantity'])
-        //->with('product:id')
-        ->where('store_id', $store_id)
-        ->where('product_id', $product_id)
-        ->whereBetween('deliver_date', [$start, $end]);
-        
-    }    
-    //両方のデータを結合          
-    $union = $order_drafts->unionAll($orders)->get();
-
-    return $union;        
-}   
-
-*/

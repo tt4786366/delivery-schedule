@@ -36,8 +36,7 @@ class ProductsController extends Controller
     {
         $categories = Category::all();
         $factories = Factory::all();
-        $store_chains = StoreChain::orderBy('id')
-        ->get();
+        $store_chains = StoreChain::all();
         
         return view('products.create', [
             'store_chains' => $store_chains,
@@ -75,8 +74,8 @@ class ProductsController extends Controller
             'valid_from'=>$request->valid_from,
             'valid_until'  => $request->valid_until,
         ]);
-       // return redirect()->route('stores.index');
-       return back();
+        return redirect()->route('products.index');
+       //return back();
     }
 
     /**
@@ -87,7 +86,15 @@ class ProductsController extends Controller
      */
     public function show($id)
     {
-        //
+
+        // idの値でメッセージを検索して取得
+        $product = Product::findOrFail($id);
+//                ->with(['category', 'factory', 'store_chain'])->get();
+//dd($product);
+        // メッセージ詳細ビューでそれを表示
+        return view('products.show', [
+            'product' => $product,
+        ]);        //
     }
 
     /**
@@ -98,7 +105,21 @@ class ProductsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $categories = Category::all();
+        $factories = Factory::all();
+        $store_chains = StoreChain::all();
+
+
+        // idの値でメッセージを検索して取得
+        $product = Product::findOrFail($id);
+        // メッセージ編集ビューでそれを表示
+        return view('products.edit', [
+            'product' => $product,
+            'store_chains' => $store_chains,
+            'categories' => $categories,
+            'factories' => $factories,
+
+        ]);
     }
 
     /**
@@ -110,7 +131,24 @@ class ProductsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // idの値で商品を検索して取得
+        $product = Product::findOrFail($id);
+        // 商品を更新
+        $product->name = $request->name;
+        $product->price = $request->price;
+        $product->lot = $request->lot;
+        $product->category_id = $request->category_id;
+        $product->factory_id = $request->factory_id;
+        $product->chain_id = $request-> store_chain_id;
+        $product->valid_from = $request->valid_from;
+        $product->valid_until = $request ->valid_until;
+        
+        
+        $product->save();
+
+        // トップページへリダイレクトさせる
+        return redirect()->route('products.index');
+        
     }
 
     /**

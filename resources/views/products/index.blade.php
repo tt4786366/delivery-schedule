@@ -5,26 +5,28 @@
 @if (count($products) > 0)
  <div class="mx-auto">
 <?php $prev = '' ?>
+<table class='table'>
         @foreach ($products as $product)
-            <div class="row">
+<tr>
             @if($prev == $product->category->name)
-            <div class="col-3"></div>
+            <td class="col-3"></td>
             @else
-            <div class="col-3">{{$product->category->name}}</div>
+            <td class="col-3">{{$product->category->name}}</td>
             @endif
 <?php $prev = $product->category->name; ?>            
-                <div class="col-3">
+                <td class="col-3">
                         {{-- 商品詳細ページへのリンク --}}
                         {!! link_to_route('products.show',  $product->name , ['product' => $product->id]) !!} 
-                </div>
-                <div class="col-3">
-                        {{-- 商品詳細ページへのリンク --}}
+                </td>
+                <td class="col-3">
                         {!!   $product->price  !!} 
-                </div>
-                
-            </div>
+                </td>
+                <td class="col-3">
+                        {!!   $product->lot  !!} 
+                </td>                
+</tr>
         @endforeach
-
+</table>
 </div>
 @endif
 
