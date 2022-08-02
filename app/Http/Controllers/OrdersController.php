@@ -8,7 +8,7 @@ use App\Order;
 use Carbon\Carbon;
 use App\Store;
 use App\Product;
-
+use App\Factory;
 require_once 'OrderTrait.php';
 
 class OrdersController extends Controller
@@ -95,13 +95,27 @@ class OrdersController extends Controller
                 ];
             }else{
                 //期間が選択されていない場合は、期間、店舗の選択画面を表示する
+                $factories=[];
+                switch ($authorization){
+                    case 1:
+                        $users = User::where('authorization',2)->orderBy('team_id')->get();
 
+                    break;
+                    case 2:
+//                        $stores = \Auth::user()->stores;
+                        $factories = Factory::All();
+
+                        break;
+                    case 3:
+                        break;
+                    default:
+                }
                 // ユーザの担当店舗を取得
                 $users = User::where('authorization',2)->orderBy('team_id')->get();
                 //$stores = $user->stores()->orderBy('id')->get();
                 $data = [
                     'users' => $users,  
-
+                    'factories'=>$factories,
                 ];
             }
 

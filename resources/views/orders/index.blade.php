@@ -6,29 +6,26 @@
         @switch (Auth::user()->authorization)
     
             @case (1)
-        <div class="text-center">
-            <h1>管理者処理選択</h1>
-         </div>
-             @if (isset($start))
-
-            @include('orders.navtabs')         
-            @include('orders.table');
-            @else
-
-            @include('orders.search')
-            @endif
-
-
-                管理者の処理選択
+                <div class="text-center">
+                    <h1>管理者処理選択</h1>
+                </div>
+                @if (isset($start))
+                    @include('orders.navtabs')         
+                    @include('orders.table');
+                @else
+                    @include('orders.adminsearch')
+                @endif
                 @break
             @case (2)
                 <div class="text-center">
                     <h1>承認済み計画検索</h1>
                 </div>
-                <div class="row justify-content-around my-5">
-                    <a class="btn btn-outline-dark col-4" href="#" role="button">計画作成</a>
-                    <a class="btn btn-outline-dark col-4" href="#" role="button">承認済み計画表示</a>
-                </div>
+                @if (isset($start))
+                    @include('orders.navtabs')         
+                    @include('orders.table');
+                @else
+                    @include('orders.driversearch')
+                @endif
             
                 @break
             @case (3)

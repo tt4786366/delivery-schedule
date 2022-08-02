@@ -15,7 +15,9 @@
 <?php $prev = $store->store_chain->name; ?>            
                 <div class="col-9">
                         {{-- ユーザ詳細ページへのリンク --}}
-                        <li class="list-inline-item col-2">{!! link_to_route('stores.show',  $store->name , ['store' => $store->id]) !!}</li> 
+                        <li class="list-inline-item col-3">{!! link_to_route('stores.show',  $store->name , ['store' => $store->id]) !!}</li> 
+                        <li class="list-inline-item col-2">{{ $store->user->name}}</li> 
+                
                 </div>
             </div>
         @endforeach

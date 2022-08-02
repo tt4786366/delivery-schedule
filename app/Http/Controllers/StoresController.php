@@ -12,6 +12,7 @@ class StoresController extends Controller
     {
         // 店舗一覧を取得
         $stores = Store::with('store_chain')
+        ->orderBy('user_id')
         ->orderBy('chain_id')
         ->get();
 
