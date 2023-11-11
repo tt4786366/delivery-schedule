@@ -22,7 +22,7 @@ class OrdersController extends Controller
         if (\Auth::check()) { // 認証済みの場合
             // 認証済みユーザを取得
             $authorization = \Auth::user()->authorization;
-
+//dd($request);
             if ($request->has('start')){
                 if ($request->has('user')){
                     $user=$request->user;
@@ -38,6 +38,7 @@ class OrdersController extends Controller
                 $stores = Store::where('user_id', $user)
                 ->orderBy('chain_id', 'asc')
                 ->orderBy('id')->get();
+
                 switch ($authorization){
                     case 1:
                     if (isset($store)==false){
@@ -57,7 +58,10 @@ class OrdersController extends Controller
                 //期間中の日付をdate型の配列にする。
                 $dates=$this->setDates($date, $end, $date_count);
                 //指定期間の各日が提出済みか確認                
+
                 $order_exists = $this->ifOrderExists($dates, $store->id);
+                
+
                 //現在有効な商品を取得
                 $products = $this->getProducts($start, $end);
                 //order_drafts, ordersテーブルのデータを取得
